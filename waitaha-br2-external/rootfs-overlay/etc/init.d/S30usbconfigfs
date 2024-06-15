@@ -1,0 +1,88 @@
+#!/bin/sh
+# Largely taken from postmarketOS' init functions, many thanks!
+# Their repository is licensed under the terms of the GPLv3, same as waitaha.
+# https://gitlab.com/postmarketOS/pmaports/-/blob/master/main/postmarketos-initramfs/init_functions.sh
+
+umask 077
+
+start() {
+	printf "Configuring USB: "
+
+	mkdir /config
+	mount -t configfs -o nodev,noexec,nosuid configfs /config
+
+	CONFIGFS=/config/usb_gadget
+
+	if ! [ -e "$CONFIGFS" ]; then
+		echo "SKIP"
+		return
+	fi
+
+	# Default values for USB-related deviceinfo variables
+	usb_idVendor="0x18D1"   # default: Google Inc.
+	usb_idProduct="0xD001"  # default: Nexus 4 (fastboot)
+	usb_serialnumber="waitaha"
+	usb_network_function="ncm.usb0"
+	usb_network_function_fallback="rndis.usb0"
+
+	# Create an usb gadet configuration
+	mkdir $CONFIGFS/g1
+	echo "$usb_idVendor"  > "$CONFIGFS/g1/idVendor"
+	echo "$usb_idProduct" > "$CONFIGFS/g1/idProduct"
+
+	# Create english (0x409) strings
+	mkdir $CONFIGFS/g1/strings/0x409 || echo "  Couldn't create $CONFIGFS/g1/strings/0x409"
+
+	# shellcheck disable=SC2154
+	echo "$deviceinfo_manufacturer" > "$CONFIGFS/g1/strings/0x409/manufacturer"
+	echo "$usb_serialnumber"        > "$CONFIGFS/g1/strings/0x409/serialnumber"
+	# shellcheck disable=SC2154
+	echo "$deviceinfo_name"         > "$CONFIGFS/g1/strings/0x409/product"
+
+	# Create network function.
+	if ! mkdir $CONFIGFS/g1/functions/"$usb_network_function"; then
+		echo "  Couldn't create $CONFIGFS/g1/functions/$usb_network_function"
+		# Try the fallback function next
+		if mkdir $CONFIGFS/g1/functions/"$usb_network_function_fallback"; then
+			usb_network_function="$usb_network_function_fallback"
+		else
+			echo "  Couldn't create $CONFIGFS/g1/functions/$usb_network_function_fallback"
+		fi
+	fi
+
+	# Create configuration instance for the gadget
+	mkdir $CONFIGFS/g1/configs/c.1
+	mkdir $CONFIGFS/g1/configs/c.1/strings/0x409
+	echo "USB network" > $CONFIGFS/g1/configs/c.1/strings/0x409/configuration
+
+	# Link the network instance to the configuration
+	ln -s $CONFIGFS/g1/functions/"$usb_network_function" $CONFIGFS/g1/configs/c.1
+
+	# Check if there's an USB Device Controller
+	local _udc_dev="${deviceinfo_usb_network_udc:-}"
+	if [ -z "$_udc_dev" ]; then
+		_udc_dev=$(ls /sys/class/udc)
+		if [ -z "$_udc_dev" ]; then
+			return
+		fi
+	fi
+
+	# Remove any existing UDC to avoid "write error: Resource busy" when setting UDC again
+	echo "" > /config/usb_gadget/g1/UDC
+	# Link the gadget instance to an USB Device Controller. This activates the gadget.
+	# See also: https://gitlab.com/postmarketOS/pmbootstrap/issues/338
+	echo "$_udc_dev" > /config/usb_gadget/g1/UDC
+
+	echo "OK"
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  *)
+	echo "Usage: $0 start"
+	exit 1
+esac
+
+exit $?

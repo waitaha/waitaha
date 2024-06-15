@@ -1,0 +1,8 @@
+# defconfig generated from merging fragments
+waitaha-br2-external/configs/generated_defconfig
+
+# VSCode stuff
+.vscode-ctags
+
+# Output
+out/
