@@ -1,0 +1,4 @@
+config BR2_PACKAGE_FIRMWARE_DAVINCI
+	bool "Firmware files for davinci"
+	help
+	  This package contains firmware files for davinci.
