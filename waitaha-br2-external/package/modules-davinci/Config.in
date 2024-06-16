@@ -1,4 +1,0 @@
-config BR2_PACKAGE_MODULES_DAVINCI
-	bool "modules-load.d entry for davinci"
-	help
-	  This package creates a modules-load.d for davinci.

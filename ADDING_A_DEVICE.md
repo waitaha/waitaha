@@ -9,4 +9,4 @@ sm7150
 davinci
 ```
 * Then, add the config fragments in `waitaha-br2-external/configs`. The names must be the same as in your `configs` file, but suffixed with `_defconfig`
-* Optionally, create a firmware and modules-load package in `waitaha-br2-external/package`
+* Optionally, create a firmware package in `waitaha-br2-external/package`
