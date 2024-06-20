@@ -1,3 +1,4 @@
 # Add waitaha-specific packages here
 source "$BR2_EXTERNAL_WAITAHA_PATH/package/firmware-davinci/Config.in"
-source "$BR2_EXTERNAL_WAITAHA_PATH/package/modules-autoload/Config.in"
+source "$BR2_EXTERNAL_WAITAHA_PATH/package/waitaha-ui/Config.in"
+source "$BR2_EXTERNAL_WAITAHA_PATH/package/drm-info/Config.in"

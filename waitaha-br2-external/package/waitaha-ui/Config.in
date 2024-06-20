@@ -1,0 +1,10 @@
+config BR2_PACKAGE_WAITAHA_UI
+	bool "waitaha recovery UI"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_HAS_UDEV # libudev
+	depends on BR2_PACKAGE_HAS_LIBGBM
+	select BR2_PACKAGE_HOST_RUSTC
+	select BR2_PACKAGE_LIBINPUT
+	select BR2_PACKAGE_LIBXKBCOMMON
+	help
+	  This package is the main recovery UI for waitaha.

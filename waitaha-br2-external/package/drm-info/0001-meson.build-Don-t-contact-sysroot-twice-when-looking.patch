@@ -1,0 +1,26 @@
+From 719e8ef22cad9405336a87feccbc27ce6bef7777 Mon Sep 17 00:00:00 2001
+From: Jens Reidel <adrian@travitia.xyz>
+Date: Thu, 20 Jun 2024 10:34:18 +0200
+Subject: [PATCH] meson.build: Don't contact sysroot twice when looking for
+ fourcc.h
+
+---
+ meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index c3b334c..9fa4077 100644
+--- a/meson.build
++++ b/meson.build
+@@ -69,7 +69,7 @@ if libdrm.version().version_compare('<2.4.120')
+ elif libdrm.type_name() == 'internal'
+   fourcc_h = meson.current_source_dir() / 'subprojects/libdrm/include/drm/drm_fourcc.h'
+ else
+-  fourcc_h = libdrm.get_pkgconfig_variable('pc_sysrootdir') + libdrm.get_pkgconfig_variable('includedir') / 'libdrm/drm_fourcc.h'
++  fourcc_h = libdrm.get_pkgconfig_variable('includedir') / 'libdrm/drm_fourcc.h'
+ endif
+ 
+ if libpci.found()
+-- 
+2.45.1
+
