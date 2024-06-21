@@ -1,6 +1,5 @@
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(shell dirname $(mkfile_path))
-WAITAHA_SPECIFIC_HOST_TOOLS := mkbootimg
 WAITAHA_BR2 := $(current_dir)/buildroot
 WAITAHA_BR2_EXTERNAL := $(current_dir)/waitaha-br2-external
 SUPPORTED_DEVICES := $(shell ls $(WAITAHA_BR2_EXTERNAL)/board -I waitaha)
@@ -10,14 +9,7 @@ CONFIGS_FILE := $(WAITAHA_BR2_EXTERNAL)/board/$(DEVICE)/configs
 MERGE_CONFIG := $(WAITAHA_BR2)/support/kconfig/merge_config.sh
 
 .PHONY: all
-all: check_host_tools merge_configs build_image
-
-.PHONY: check_host_tools
-check_host_tools:
-	@echo "Checking host tool availability..."
-	@for cmd in $(WAITAHA_SPECIFIC_HOST_TOOLS); do \
-		command -v $$cmd >/dev/null 2>&1 || { echo >&2 "$$cmd is required but not installed. Aborting."; exit 1; }; \
-	done
+all: merge_configs build_image
 
 .PHONY: check_device_valid
 check_device_valid:
