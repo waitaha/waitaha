@@ -1,6 +1,6 @@
-WAITAHA_UI_VERSION = c4e896bfb680c6443d75d91559cb03ff7cfdd8c9
-WAITAHA_UI_SITE = git@github.com:waitaha/waitaha-ui.git
-WAITAHA_UI_SITE_METHOD = git
+WAITAHA_UI_VERSION = 1.0
+WAITAHA_UI_SITE = $(BR2_EXTERNAL_WAITAHA_PATH)/../waitaha-ui
+WAITAHA_UI_SITE_METHOD = local
 WAITAHA_UI_DEPENDENCIES = udev libgbm libinput libxkbcommon
 
 define WAITAHA_UI_INSTALL_TARGET_CMDS

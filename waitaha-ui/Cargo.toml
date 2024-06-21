@@ -1,0 +1,25 @@
+[package]
+name = "waitaha-ui"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+slint = { version = "1", default-features = false, features = [
+    "compat-1-2",
+    "std",
+    "backend-linuxkms-noseat",
+    "renderer-femtovg"
+] }
+
+[build-dependencies]
+slint-build = "1"
+
+[profile.release]
+codegen-units = 1
+debug = false
+incremental = false
+lto = true
+opt-level = 3
+panic = "abort"
+debug-assertions = false
+strip = "symbols"

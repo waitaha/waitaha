@@ -6,3 +6,6 @@ waitaha-br2-external/configs/generated_defconfig
 
 # Output
 out/
+
+# waitaha-ui output
+waitaha-ui/target/
