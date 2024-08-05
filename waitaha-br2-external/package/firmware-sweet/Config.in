@@ -1,0 +1,4 @@
+config BR2_PACKAGE_FIRMWARE_SWEET
+	bool "Firmware files for sweet"
+	help
+	  This package contains firmware files for sweet.
