@@ -8,4 +8,8 @@ define FIRMWARE_SWEET_INSTALL_TARGET_CMDS
     $(INSTALL) -D -m 644 $(FIRMWARE_SWEET_SITE)/*.mbn $(TARGET_DIR)/lib/firmware/qcom/sm7150/sweet/
 endef
 
+define FIRMWARE_SWEET_INSTALL_INIT_SYSV
+	$(INSTALL) -Dm755 $(FIRMWARE_SWEET_SITE)/modem-up.initd $(TARGET_DIR)/etc/init.d/S72modem
+endef
+
 $(eval $(generic-package))
