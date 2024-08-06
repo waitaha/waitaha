@@ -14,3 +14,7 @@ davinci
 ## Debugging
 
 You may add the `debug` fragment to your `configs` file to install some utilities for debugging into the initramfs.
+
+## Kernel requirements
+
+Qualcomm kernels should take note to enable `CONFIG_QRTR` and support the in-kernel pd-mapper implementation. WiFi requires both the in-kernel `qrtr-ns` and `pd-mapper`.
