@@ -11,7 +11,7 @@ generate_recovery_img()
 
     mkbootimg \
         --kernel "${BINARIES_DIR}/Image.gz-dtb" \
-        --ramdisk "${BINARIES_DIR}/rootfs.cpio.gz" \
+        --ramdisk "${BINARIES_DIR}/rootfs.cpio.zst" \
         --output "${out_dir}/recovery.img" \
         $@
 }
