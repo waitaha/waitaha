@@ -1,0 +1,6 @@
+config BR2_PACKAGE_TQFTPSERV
+	bool "Trivial File Transfer Protocol server over AF_QIPCRTR"
+    select BR2_PACKAGE_QRTR
+    select BR2_PACKAGE_ZSTD
+	help
+	  This package builds the tqftpserv binary.

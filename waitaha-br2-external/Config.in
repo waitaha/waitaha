@@ -1,5 +1,10 @@
 # Add waitaha-specific packages here
+source "$BR2_EXTERNAL_WAITAHA_PATH/package/drm-info/Config.in"
+source "$BR2_EXTERNAL_WAITAHA_PATH/package/qrtr/Config.in"
+source "$BR2_EXTERNAL_WAITAHA_PATH/package/rmtfs/Config.in"
+source "$BR2_EXTERNAL_WAITAHA_PATH/package/tqftpserv/Config.in"
+source "$BR2_EXTERNAL_WAITAHA_PATH/package/waitaha-ui/Config.in"
+
+# Device firmware packages
 source "$BR2_EXTERNAL_WAITAHA_PATH/package/firmware-davinci/Config.in"
 source "$BR2_EXTERNAL_WAITAHA_PATH/package/firmware-sweet/Config.in"
-source "$BR2_EXTERNAL_WAITAHA_PATH/package/waitaha-ui/Config.in"
-source "$BR2_EXTERNAL_WAITAHA_PATH/package/drm-info/Config.in"

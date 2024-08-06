@@ -1,0 +1,4 @@
+config BR2_PACKAGE_QRTR
+	bool "Userspace reference for net/qrtr in the Linux kernel"
+	help
+	  This package builds the qrtr library.

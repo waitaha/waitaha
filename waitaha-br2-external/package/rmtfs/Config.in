@@ -1,0 +1,6 @@
+config BR2_PACKAGE_RMTFS
+	bool "Qualcomm Remote Filesystem Service Implementation"
+    depends on BR2_PACKAGE_HAS_UDEV # libudev
+    select BR2_PACKAGE_QRTR
+	help
+	  This package builds the rmtfs executable.
