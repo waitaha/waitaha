@@ -1,2 +1,2 @@
 #!/bin/sh
-waitaha-ui
+SLINT_SCALE_FACTOR=5 /usr/bin/waitaha-ui
