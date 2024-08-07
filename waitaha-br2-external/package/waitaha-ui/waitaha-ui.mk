@@ -14,4 +14,10 @@ define WAITAHA_UI_INSTALL_INIT_SYSV
                           $(TARGET_DIR)/etc/init.d/S99waitaha-ui
 endef
 
+define WAITAHA_UI_CARGO_VENDOR
+    cd $(@D) && mkdir -p .cargo/ && CARGO_HOME=$(BR_CARGO_HOME) cargo vendor --manifest-path Cargo.toml --locked VENDOR > .cargo/config.toml
+endef
+
+WAITAHA_UI_POST_RSYNC_HOOKS += WAITAHA_UI_CARGO_VENDOR
+
 $(eval $(cargo-package))
