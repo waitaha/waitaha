@@ -9,23 +9,23 @@ umask 077
 
 start() {
 	printf "Mounting modem firmware: "
-    mkdir -p /modem
+	mkdir -p /modem
 	mount /dev/disk/by-partlabel/modem /modem
-    ln -s /modem/image/modem.mdt /lib/firmware/qcom/sm7150/sweet/modem.mbn
-    for FILE in /modem/image/modem.b*; \
-        do ln -s $FILE /lib/firmware/qcom/sm7150/sweet/$(basename $FILE); \
-    done
+	ln -s /modem/image/modem.mdt /lib/firmware/qcom/sm7150/sweet/modem.mbn
+	for FILE in /modem/image/modem.b*; \
+		do ln -s $FILE /lib/firmware/qcom/sm7150/sweet/$(basename $FILE); \
+	done
 	echo "OK"
 
-    printf "Starting modem: "
-    echo start > /sys/class/remoteproc/remoteproc2/state
-    echo "OK"
+	printf "Starting modem: "
+	echo start > /sys/class/remoteproc/remoteproc2/state
+	echo "OK"
 }
 stop() {
 	printf "Unmounting modem firmware: "
-    rm /lib/firmware/qcom/sm7150/sweet/modem.mbn
-    rm /lib/firmware/qcom/sm7150/sweet/modem.b*
-    umount /modem
+	rm /lib/firmware/qcom/sm7150/sweet/modem.mbn
+	rm /lib/firmware/qcom/sm7150/sweet/modem.b*
+	umount /modem
 	echo "OK"
 }
 restart() {
