@@ -1,0 +1,11 @@
+config BR2_PACKAGE_DEVICEINFO
+	bool "Deviceinfo file"
+	help
+	  This package creates the /etc/deviceinfo file.
+
+if BR2_PACKAGE_DEVICEINFO
+
+config BR2_PACKAGE_DEVICEINFO_INFO
+	string "Deviceinfo flags"
+
+endif

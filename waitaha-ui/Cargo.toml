@@ -10,6 +10,7 @@ slint = { version = "1", default-features = false, features = [
     "backend-linuxkms-noseat",
     "renderer-femtovg"
 ] }
+time = { version = "0.3", features = ["formatting", "local-offset"] }
 
 [build-dependencies]
 slint-build = "1"

@@ -1,0 +1,146 @@
+import { Button, Palette, VerticalBox } from "std-widgets.slint";
+
+global Settings {
+    out property <string> title: "Waitaha Recovery";
+    out property <string> sub_title: "Playground Edition";
+}
+
+export enum NotchPosition {
+    Left,
+    Middle,
+    Right
+}
+
+export struct NotchInfo {
+    position: NotchPosition,
+    width: int,
+    height: int
+}
+
+export global DeviceInfo { 
+    in-out property <string> time;
+    in-out property <int> battery_percentage;
+    in-out property <NotchInfo> notch_info;
+}
+
+component SmallSpacer inherits Rectangle {
+    height: 0.2rem;
+}
+
+export enum MenuPosition {
+    Top,
+    Bottom,
+    Middle,
+    Alone
+}
+
+component MainMenu inherits Rectangle {
+    in property <MenuPosition> position: MenuPosition.Top;
+    private property <bool> requireTopRadius: position == MenuPosition.Top || position == MenuPosition.Alone;
+    private property <bool> requireBottomRadius: position == MenuPosition.Bottom || position == MenuPosition.Alone;
+
+    Rectangle {
+        background: Palette.control-background;
+        border-top-left-radius: requireTopRadius ? 2.rem : 0.5rem;
+        border-top-right-radius: requireTopRadius ? 2.rem : 0.5rem;
+        border-bottom-left-radius: requireBottomRadius ? 2.rem : 0.5rem;
+        border-bottom-right-radius: requireBottomRadius ? 2.rem : 0.5rem;
+    }
+}
+
+component StatusBar inherits Rectangle {
+    background: Palette.control-background;
+
+    private property <bool> addLeftPadding: DeviceInfo.notch_info.position == NotchPosition.Left;
+    private property <bool> addRightPadding: DeviceInfo.notch_info.position == NotchPosition.Right;
+
+    HorizontalLayout {
+        padding: 0.2rem;
+        padding-left: (addLeftPadding ? DeviceInfo.notch_info.width : 1) * 1.rem;
+        padding-right: (addRightPadding ? DeviceInfo.notch_info.width : 1) * 1.rem;
+        alignment: space-between;
+                
+        Text {
+            text: DeviceInfo.time;
+            color: Palette.control-foreground;
+        }
+
+        Text {
+            text: DeviceInfo.battery_percentage + "%";
+            color: Palette.control-foreground;
+        }
+    }
+    
+}
+
+export component MainWindow inherits Window {
+
+    VerticalLayout {
+        StatusBar {
+            vertical-stretch: 0;
+        }
+
+        // Title
+        Rectangle {
+            background: Palette.background;
+            padding: 5rem;
+
+            HorizontalLayout {
+                alignment: center;
+                padding: 2.rem;
+                
+                VerticalLayout {
+                    Text {
+                        text: Settings.title;
+                        color: Palette.foreground;
+                        font-size: 16.px;
+                        font-weight: 1000;
+                        horizontal-alignment: center;
+                    }
+                    Text {
+                        text: Settings.sub_title;
+                        color: Palette.foreground;
+                        font-size: 11.px;
+                        horizontal-alignment: center;
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            background: Palette.background;
+            vertical-stretch: 1;
+            padding: 5rem;
+            
+            VerticalLayout {
+                padding: 1rem;
+
+                MainMenu {
+                    position: MenuPosition.Top;
+                    height: 10rem;
+                }
+
+                SmallSpacer {}
+
+                MainMenu {
+                    position: MenuPosition.Middle;
+                    height: 10rem;
+                }
+
+                SmallSpacer {}
+
+                MainMenu {
+                    position: MenuPosition.Bottom;
+                    height: 10rem;
+                }
+
+                // Spacer
+                Rectangle {
+                    vertical-stretch: 1;
+                }
+            }
+        }
+    }
+
+}
+

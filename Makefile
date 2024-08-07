@@ -34,7 +34,7 @@ merge_configs: check_device_valid
 build_image:
 	@echo "Running make generated_defconfig..."
 	$(MAKE) -C buildroot BR2_EXTERNAL=$(WAITAHA_BR2_EXTERNAL) generated_defconfig
-	$(MAKE) -C buildroot BR2_EXTERNAL=$(WAITAHA_BR2_EXTERNAL) waitaha-ui-rebuild all
+	$(MAKE) -C buildroot BR2_EXTERNAL=$(WAITAHA_BR2_EXTERNAL) deviceinfo-rebuild waitaha-ui-rebuild all
 
 .PHONY: $(SUPPORTED_DEVICES)
 $(SUPPORTED_DEVICES):

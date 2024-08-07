@@ -1,4 +1,5 @@
 # Add waitaha-specific packages here
+source "$BR2_EXTERNAL_WAITAHA_PATH/package/deviceinfo/Config.in"
 source "$BR2_EXTERNAL_WAITAHA_PATH/package/drm-info/Config.in"
 source "$BR2_EXTERNAL_WAITAHA_PATH/package/qrtr/Config.in"
 source "$BR2_EXTERNAL_WAITAHA_PATH/package/rmtfs/Config.in"
