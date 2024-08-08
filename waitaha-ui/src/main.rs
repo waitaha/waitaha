@@ -34,8 +34,7 @@ fn main() -> Result<(), slint::PlatformError> {
         app_device_info.set_manufacturer(deviceinfo.manufacturer.into());
     }
 
-    let update_timer = Timer::default();
-    update_timer.start(TimerMode::Repeated, Duration::from_secs(1), {
+    let update_info = {
         let weak_app = app.as_weak();
 
         move || {
@@ -48,7 +47,12 @@ fn main() -> Result<(), slint::PlatformError> {
             app_device_info.set_time(time_fmt.into());
             app_device_info.set_battery_percentage(battery.capacity().unwrap() as i32);
         }
-    });
+    };
+
+    update_info();
+
+    let update_timer = Timer::default();
+    update_timer.start(TimerMode::Repeated, Duration::from_secs(1), update_info);
 
     app.run()
 }
