@@ -1,5 +1,7 @@
 use std::{fs::read_to_string, str::FromStr};
 
+use super::NotchPosition;
+
 /// Device info parsing error.
 #[derive(Debug)]
 pub enum Error {
@@ -17,7 +19,11 @@ pub enum Error {
 #[derive(Debug, Default)]
 pub struct DeviceInfoConfig {
     /// Camera cutout location.
-    pub display_cutout: Cutout,
+    pub notch_location: NotchPosition,
+    /// Camera cutout width in pixels.
+    pub notch_width: i32,
+    /// Camera cutout height in pixels.
+    pub notch_height: i32,
     /// Rounded corner radius in pixels.
     pub corner_radius: u8,
     /// Device name.
@@ -50,7 +56,13 @@ impl FromStr for DeviceInfoConfig {
             match parts {
                 // key=value
                 Some((key, value)) => match key {
-                    "display_cutout" => info.display_cutout = Cutout::from_str(value)?,
+                    "notch_location" => info.notch_location = NotchPosition::from_str(value)?,
+                    "notch_width" => {
+                        info.notch_width = value.parse().map_err(|_| Error::ExpectedInt)?
+                    }
+                    "notch_height" => {
+                        info.notch_height = value.parse().map_err(|_| Error::ExpectedInt)?
+                    }
                     "corner_radius" => {
                         info.corner_radius = value.parse().map_err(|_| Error::ExpectedInt)?
                     }
@@ -70,24 +82,14 @@ impl FromStr for DeviceInfoConfig {
     }
 }
 
-/// Camera cutout location.
-#[derive(Debug, Default)]
-pub enum Cutout {
-    #[default]
-    None,
-    Left,
-    Center,
-    Right,
-}
-
-impl FromStr for Cutout {
+impl FromStr for NotchPosition {
     type Err = Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "none" => Ok(Self::None),
             "left" => Ok(Self::Left),
-            "center" => Ok(Self::Center),
+            "center" | "middle" => Ok(Self::Middle),
             "right" => Ok(Self::Right),
             _ => Err(Error::UnknownCutout),
         }

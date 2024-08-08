@@ -1,30 +1,10 @@
-import { Button, Palette, VerticalBox } from "std-widgets.slint";
-
-global Settings {
-    out property <string> title: "Waitaha Recovery";
-    out property <string> sub_title: "Playground Edition";
-}
+import { Button, Palette } from "std-widgets.slint";
 
 export enum NotchPosition {
+    None,
     Left,
     Middle,
     Right
-}
-
-export struct NotchInfo {
-    position: NotchPosition,
-    width: int,
-    height: int
-}
-
-export global DeviceInfo { 
-    in-out property <string> time;
-    in-out property <int> battery_percentage;
-    in-out property <NotchInfo> notch_info;
-}
-
-component SmallSpacer inherits Rectangle {
-    height: 0.2rem;
 }
 
 export enum MenuPosition {
@@ -34,47 +14,158 @@ export enum MenuPosition {
     Alone
 }
 
+export struct NotchInfo {
+    position: NotchPosition,
+    width: int,
+    height: int,
+}
+
+export global DeviceInfo {
+    in-out property <string> time: "12:00";
+    in-out property <int> battery_percentage: 69;
+    in-out property <NotchInfo> notch_info: { position: NotchPosition.None, width: 0, height: 0 };
+    in-out property <int> corner_radius;
+    in-out property <string> name;
+    in-out property <string> codename;
+    in-out property <string> manufacturer;
+}
+
+global Settings {
+    out property <string> title: "Waitaha Recovery";
+    out property <string> subTitle: "Playground Edition";
+}
+
+component SmallSpacer inherits Rectangle {
+    height: 0.2rem;
+}
+
 component MainMenu inherits Rectangle {
     in property <MenuPosition> position: MenuPosition.Top;
     private property <bool> requireTopRadius: position == MenuPosition.Top || position == MenuPosition.Alone;
     private property <bool> requireBottomRadius: position == MenuPosition.Bottom || position == MenuPosition.Alone;
 
-    Rectangle {
-        background: Palette.control-background;
+    in property <string> title;
+    in property <string> subTitle;
+    in property <image> icon;
+
+    in-out property itemBackground <=> item.background;
+    callback clicked <=> touch.clicked;
+    touch := TouchArea { }
+
+    item := Rectangle {
+        clip: true;
+        background: touch.pressed ? Palette.selection-background : Palette.control-background;
         border-top-left-radius: requireTopRadius ? 2.rem : 0.5rem;
         border-top-right-radius: requireTopRadius ? 2.rem : 0.5rem;
         border-bottom-left-radius: requireBottomRadius ? 2.rem : 0.5rem;
         border-bottom-right-radius: requireBottomRadius ? 2.rem : 0.5rem;
+
+        HorizontalLayout {
+            padding: 1.6rem;
+
+            Image {
+                source: icon;
+                image-rendering: ImageRendering.smooth;
+                width: 2rem;
+                colorize: Palette.foreground;
+            }
+
+            VerticalLayout {
+                padding-left: 1rem;
+                padding-right: 1rem;
+                spacing: 0.5rem;
+                Text {
+                    text: title;
+                    color: Palette.foreground;
+                    font-size: 1.3rem;
+                    font-weight: 1000;
+                }
+
+                Text {
+                    text: subTitle;
+                    color: Palette.foreground;
+                    font-size: 1.05rem;
+                }
+            }
+        }
     }
 }
 
+// Battery Indicator
+component BatteryIndicator inherits Rectangle {
+    clip: true;
+    border-radius: radius;
+
+    in-out property <int> battery_level;
+    // Battery level from 0 to 100
+    in property <float> radiusMultiplier: 6;
+    in property <float> textSizeMultiplier: 4;
+    private property <length> currentWidth: self.width;
+    private property <length> radius: currentWidth / radiusMultiplier;
+
+    HorizontalLayout {
+        width: currentWidth;
+        height: 100%;
+        // Filled
+        Rectangle {
+            width: currentWidth / 100 * battery_level;
+            background: Palette.accent-background;
+            border-bottom-left-radius: radius;
+            border-top-left-radius: radius;
+        }
+
+        // Unfilled
+        Rectangle {
+            width: currentWidth - currentWidth / 100 * battery_level;
+            background: Palette.selection-background;
+            border-bottom-right-radius: radius;
+            border-top-right-radius: radius;
+        }
+    }
+
+    private property <length> textSize: currentWidth / textSizeMultiplier;
+    Text {
+        text: battery_level + "%";
+        color: Palette.accent-foreground;
+        font-size: textSize;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+}
+
+// StatusBar
 component StatusBar inherits Rectangle {
     background: Palette.control-background;
 
     private property <bool> addLeftPadding: DeviceInfo.notch_info.position == NotchPosition.Left;
     private property <bool> addRightPadding: DeviceInfo.notch_info.position == NotchPosition.Right;
+    private property <length> cutoutHeight: DeviceInfo.notch_info.position != NotchPosition.None ? DeviceInfo.notch_info.height / 2 * 1.px : 0px;
 
     HorizontalLayout {
-        padding: 0.2rem;
-        padding-left: (addLeftPadding ? DeviceInfo.notch_info.width : 1) * 1.rem;
-        padding-right: (addRightPadding ? DeviceInfo.notch_info.width : 1) * 1.rem;
+        padding-top: 3px + cutoutHeight;
+        padding-bottom: 3px + cutoutHeight;
         alignment: space-between;
-                
+        padding-left: (addLeftPadding ? DeviceInfo.notch_info.width : 10) * 1.px;
+        padding-right: (addRightPadding ? DeviceInfo.notch_info.width : 10) * 1.px;
         Text {
             text: DeviceInfo.time;
             color: Palette.control-foreground;
+            vertical-alignment: center;
+            font-size: 1.2rem;
         }
 
-        Text {
-            text: DeviceInfo.battery_percentage + "%";
-            color: Palette.control-foreground;
+        BatteryIndicator {
+            battery_level: DeviceInfo.battery_percentage;
+            width: 4rem;
+            height: 1.5rem;
+            radiusMultiplier: 6;
+            textSizeMultiplier: 4.2;
         }
     }
-    
 }
 
+// Root Window
 export component MainWindow inherits Window {
-
     VerticalLayout {
         StatusBar {
             vertical-stretch: 0;
@@ -88,19 +179,19 @@ export component MainWindow inherits Window {
             HorizontalLayout {
                 alignment: center;
                 padding: 2.rem;
-                
                 VerticalLayout {
                     Text {
                         text: Settings.title;
                         color: Palette.foreground;
-                        font-size: 16.px;
+                        font-size: 1.4rem;
                         font-weight: 1000;
                         horizontal-alignment: center;
                     }
+
                     Text {
-                        text: Settings.sub_title;
+                        text: Settings.subTitle;
                         color: Palette.foreground;
-                        font-size: 11.px;
+                        font-size: 1rem;
                         horizontal-alignment: center;
                     }
                 }
@@ -111,27 +202,65 @@ export component MainWindow inherits Window {
             background: Palette.background;
             vertical-stretch: 1;
             padding: 5rem;
-            
             VerticalLayout {
                 padding: 1rem;
 
                 MainMenu {
                     position: MenuPosition.Top;
-                    height: 10rem;
+                    title: "Updates";
+                    subTitle: "Install or download updates";
+                    icon: @image-url("assets/update.svg");
+                    clicked => {
+                        // Open update dialog
+                    }
                 }
 
-                SmallSpacer {}
+                SmallSpacer { }
 
                 MainMenu {
                     position: MenuPosition.Middle;
-                    height: 10rem;
+                    title: "Terminal";
+                    subTitle: "Open a bash session";
+                    icon: @image-url("assets/terminal.svg");
+                    clicked => {
+                        // Open terminal
+                    }
                 }
 
-                SmallSpacer {}
+                SmallSpacer { }
+
+                MainMenu {
+                    position: MenuPosition.Middle;
+                    title: "Partition Manager";
+                    subTitle: "Manage your partitions";
+                    icon: @image-url("assets/partition_manager.svg");
+                    clicked => {
+                        // Open partition manager
+                    }
+                }
+
+                SmallSpacer { }
+
+                MainMenu {
+                    position: MenuPosition.Middle;
+                    title: "Settings";
+                    subTitle: "Mange recovery settings";
+                    icon: @image-url("assets/settings.svg");
+                    clicked => {
+                        // Open Settings
+                    }
+                }
+
+                SmallSpacer { }
 
                 MainMenu {
                     position: MenuPosition.Bottom;
-                    height: 10rem;
+                    title: "Reboot";
+                    subTitle: "Reboot your device";
+                    icon: @image-url("assets/reboot.svg");
+                    clicked => {
+                        // Reboot
+                    }
                 }
 
                 // Spacer
@@ -141,6 +270,4 @@ export component MainWindow inherits Window {
             }
         }
     }
-
 }
-
