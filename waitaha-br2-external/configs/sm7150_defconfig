@@ -1,4 +1,5 @@
 BR2_aarch64=y
+BR2_cortex_a76_a55=y
 BR2_ROOTFS_POST_IMAGE_SCRIPT_ARGS="--cmdline console=tty0 --base 0x00000000 --kernel_offset 0x00008000 --ramdisk_offset 0x01000000 --second_offset 0x00000000 --tags_offset 0x00000100 --pagesize 4096"
 BR2_LINUX_KERNEL_CUSTOM_GIT=y
 BR2_LINUX_KERNEL_CUSTOM_REPO_URL="https://github.com/sm7150-mainline/linux"
