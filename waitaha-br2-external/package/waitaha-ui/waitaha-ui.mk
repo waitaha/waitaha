@@ -15,7 +15,12 @@ define WAITAHA_UI_INSTALL_INIT_SYSV
 endef
 
 define WAITAHA_UI_CARGO_VENDOR
-    cd $(@D) && mkdir -p .cargo/ && CARGO_HOME=$(BR_CARGO_HOME) cargo vendor --manifest-path Cargo.toml --locked VENDOR > .cargo/config.toml
+    cd $(@D) && \
+    mkdir -p .cargo/ && \
+    VENDOR_OUTPUT=$$(CARGO_HOME=$(BR_CARGO_HOME) cargo vendor --manifest-path Cargo.toml --locked VENDOR) && \
+    if ! grep -q 'source.crates-io' .cargo/config.toml 2>/dev/null; then \
+        echo "$$VENDOR_OUTPUT" >> .cargo/config.toml; \
+    fi
 endef
 
 WAITAHA_UI_POST_RSYNC_HOOKS += WAITAHA_UI_CARGO_VENDOR
