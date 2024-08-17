@@ -49,9 +49,7 @@ impl FromStr for DeviceInfoConfig {
         let mut info = Self::default();
 
         for option in s.split(',') {
-            println!("part: {option:?}");
             let parts = option.split_once('=');
-            println!("parts: {parts:?}");
 
             match parts {
                 // key=value
